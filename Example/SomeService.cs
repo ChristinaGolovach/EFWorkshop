@@ -26,7 +26,7 @@ namespace Example
         {
             using (var context = new AppDbContext())
             {
-                var customers = context.Customers.Include(c => c.Orders).ToList();
+                var customers = context.Customers.Include(c => c.Orders.Select(o => o.OrderItems.Select(oi => oi.Item))).ToList();
 
                 Console.WriteLine(Environment.NewLine + "The list of customers:");
 
@@ -34,12 +34,23 @@ namespace Example
                 {
                     var orders = customer.Orders;
 
-                    Console.WriteLine(Environment.NewLine + $"Customer: ID - {customer.Id}, Name - {customer.Name}, Order count:{orders.Count}");
+                    Console.WriteLine(Environment.NewLine + $"Customer: ID - {customer.Id}, Name - {customer.Name}, Order count - {orders.Count}");
                     Console.WriteLine($"Orders:");
 
                     foreach(var order in orders)
                     {
-                        Console.WriteLine($"ID - {order.Id}, Date - {order.Date}");
+                        var orderItems = order.OrderItems;
+
+                        Console.WriteLine($"Invoice No - {order.Id}, Date - {order.Date}, Total item count position  - {orderItems.Count}");
+                        Console.WriteLine($"Items:");
+
+                        foreach(var orderItem in orderItems)
+                        {
+                            var item = orderItem.Item;
+
+                            Console.WriteLine($"Item ID - {item.Id}, Description - {item.Description}, Price - {item.Price}, Quantity - {orderItem.Quantity}");
+                        }
+
                     }
                 }
             }
