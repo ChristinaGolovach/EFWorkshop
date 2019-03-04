@@ -15,13 +15,20 @@ namespace DAL.EntityConfigs
             this.ToTable("tbl_orders").HasKey(order => order.Id);
             this.Property(order => order.Id).HasColumnName("cln_order_id");
             this.Property(order => order.Date).HasColumnName("cln_order_date");
-            this.HasMany(order => order.Items).WithMany(item => item.Orders)
-                .Map(io =>
-                {
-                    io.MapLeftKey("cln_order_id");
-                    io.MapRightKey("cln_item_id");
-                    io.ToTable("tbl_order_items");
-                });
+
+            this.HasMany(order => order.OrderItems)
+                .WithRequired(oi => oi.Order)
+                .HasForeignKey(oi => oi.OrderId);
+
+
+
+            //this.HasMany(order => order.Items).WithMany(item => item.Orders)
+            //    .Map(io =>
+            //    {
+            //        io.MapLeftKey("cln_order_id");
+            //        io.MapRightKey("cln_item_id");
+            //        io.ToTable("tbl_order_items");
+            //    });
         }
     }
 }
